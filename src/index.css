@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --medical-blue: #1a365d;
+  --accent-blue: #2b6cb0;
+}
+
+body {
+  @apply bg-gray-100;
+}
+
+.message-container {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-blue) #e2e8f0;
+}
+
+.message-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.message-container::-webkit-scrollbar-track {
+  @apply bg-gray-200 rounded-full;
+}
+
+.message-container::-webkit-scrollbar-thumb {
+  @apply bg-blue-600 rounded-full;
+}
+
+.glass-effect {
+  @apply bg-white bg-opacity-90 backdrop-blur-sm;
+}
