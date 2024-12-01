@@ -1,32 +1,32 @@
-import { useState, useEffect } from 'react';
-import { User } from 'firebase/auth';
-import { onAuthChange, getUserProfile, UserProfile } from '../services/firebase';
+// import { useState, useEffect } from 'react';
+// import { User } from 'firebase/auth';
+// import { onAuthChange, getUserProfile, UserProfile } from '../services/firebase';
+// //
+// export function useAuth() {
+//   const [user, setUser] = useState<User | null>(null);
+//   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+//   const [loading, setLoading] = useState(true);
 
-export function useAuth() {
-  const [user, setUser] = useState<User | null>(null);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+//   useEffect(() => {
+//     const unsubscribe = onAuthChange(async (user) => {
+//       setUser(user);
 
-  useEffect(() => {
-    const unsubscribe = onAuthChange(async (user) => {
-      setUser(user);
-      
-      if (user) {
-        try {
-          const profile = await getUserProfile(user.uid);
-          setUserProfile(profile);
-        } catch (error) {
-          console.error('Error loading user profile:', error);
-        }
-      } else {
-        setUserProfile(null);
-      }
-      
-      setLoading(false);
-    });
+//       if (user) {
+//         try {
+//           const profile = await getUserProfile(user.uid);
+//           setUserProfile(profile);
+//         } catch (error) {
+//           console.error('Error loading user profile:', error);
+//         }
+//       } else {
+//         setUserProfile(null);
+//       }
 
-    return () => unsubscribe();
-  }, []);
+//       setLoading(false);
+//     });
 
-  return { user, userProfile, loading };
-}
+//     return () => unsubscribe();
+//   }, []);
+
+//   return { user, userProfile, loading };
+// }

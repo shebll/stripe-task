@@ -1,21 +1,27 @@
-import { 
+import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
-  type User
-} from 'firebase/auth';
-import { auth } from '../../config/firebase';
-import { createUserProfile } from './firestore';
+  User,
+} from "firebase/auth";
+import { auth } from "../../config/firebase";
 
 export const loginUser = async (email: string, password: string) => {
-  const userCredential = await signInWithEmailAndPassword(auth, email, password);
+  const userCredential = await signInWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
   return userCredential.user;
 };
 
 export const signupUser = async (email: string, password: string) => {
-  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-  await createUserProfile(userCredential.user);
+  const userCredential = await createUserWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
   return userCredential.user;
 };
 
