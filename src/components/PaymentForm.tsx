@@ -6,7 +6,6 @@ import {
 } from "@stripe/react-stripe-js";
 import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
-import { toast } from "sonner";
 import { Loader } from "lucide-react";
 
 interface PaymentFormProps {
@@ -40,7 +39,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
         setClientSecret(response.data.clientSecret);
       } catch (err) {
         console.error("Error creating payment intent:", err);
-        toast.error("Failed to initialize payment. Please try again.");
       }
     };
 
@@ -80,7 +78,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
       if (error) setError(error.message || "Payment failed");
     } catch (err) {
       console.error("Payment submission error:", err);
-      toast.error("An unexpected error occurred");
     } finally {
       setIsLoading(false);
     }
