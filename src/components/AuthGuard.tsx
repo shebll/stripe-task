@@ -1,14 +1,17 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 interface AuthGuardProps {
   children: React.ReactNode;
   requirePro?: boolean;
 }
 
-export const AuthGuard: React.FC<AuthGuardProps> = ({ children, requirePro = false }) => {
-  const { user, userProfile, isLoading } = useAuth();
+export const AuthGuard: React.FC<AuthGuardProps> = ({
+  children,
+  requirePro = false,
+}) => {
+  const { user, isLoading } = useAuth();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -18,7 +21,7 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({ children, requirePro = fal
     return <Navigate to="/login" />;
   }
 
-  if (requirePro && !userProfile?.isPro) {
+  if (requirePro && !user?.isPro) {
     return <Navigate to="/pro" />;
   }
 
