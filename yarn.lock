@@ -416,6 +416,11 @@
   resolved "https://registry.yarnpkg.com/@firebase/app-types/-/app-types-0.9.2.tgz#8cbcceba784753a7c0066a4809bc22f93adee080"
   integrity sha512-oMEZ1TDlBz479lmABwWsWjzHwheQKiAgnuKxE0pz0IXCVx7/rtlkx1fQ6GfgK24WCrxDKMplZrT50Kh04iMbXQ==
 
+"@firebase/app-types@^0.9.3":
+  version "0.9.3"
+  resolved "https://registry.yarnpkg.com/@firebase/app-types/-/app-types-0.9.3.tgz#8408219eae9b1fb74f86c24e7150a148460414ad"
+  integrity sha512-kRVpIl4vVGJ4baogMDINbyrIOtOxqhkZQg4jTq3l8Lw6WSk0xfpEYzezFu+Kl4ve4fbPl79dvwRtaFqAC/ucCw==
+
 "@firebase/app@0.10.13":
   version "0.10.13"
   resolved "https://registry.yarnpkg.com/@firebase/app/-/app-0.10.13.tgz#15ba34894728efd9db925f9c12f59d004de1f748"
@@ -424,6 +429,17 @@
     "@firebase/component" "0.6.9"
     "@firebase/logger" "0.4.2"
     "@firebase/util" "1.10.0"
+    idb "7.1.1"
+    tslib "^2.1.0"
+
+"@firebase/app@^0.10.16":
+  version "0.10.16"
+  resolved "https://registry.yarnpkg.com/@firebase/app/-/app-0.10.16.tgz#c557ee8fa0085909b48d6e0a00e7403943bd836f"
+  integrity sha512-SUati2qH48gvVGnSsqMkZr1Iq7No52a3tJQ4itboSTM89Erezmw3v1RsfVymrDze9+KiOLmBpvLNKSvheITFjg==
+  dependencies:
+    "@firebase/component" "0.6.11"
+    "@firebase/logger" "0.4.4"
+    "@firebase/util" "1.10.2"
     idb "7.1.1"
     tslib "^2.1.0"
 
@@ -459,6 +475,14 @@
     "@firebase/util" "1.10.0"
     tslib "^2.1.0"
     undici "6.19.7"
+
+"@firebase/component@0.6.11":
+  version "0.6.11"
+  resolved "https://registry.yarnpkg.com/@firebase/component/-/component-0.6.11.tgz#228a2ff5a6b0e5970b84d4dd298bf6ed0483018e"
+  integrity sha512-eQbeCgPukLgsKD0Kw5wQgsMDX5LeoI1MIrziNDjmc6XDq5ZQnuUymANQgAb2wp1tSF9zDSXyxJmIUXaKgN58Ug==
+  dependencies:
+    "@firebase/util" "1.10.2"
+    tslib "^2.1.0"
 
 "@firebase/component@0.6.9":
   version "0.6.9"
@@ -604,6 +628,13 @@
   dependencies:
     tslib "^2.1.0"
 
+"@firebase/logger@0.4.4":
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/@firebase/logger/-/logger-0.4.4.tgz#29e8379d20fd1149349a195ee6deee4573a86f48"
+  integrity sha512-mH0PEh1zoXGnaR8gD1DeGeNZtWFKbnz9hDO91dIml3iou1gpOnLqXQ2dJfB71dj6dpmUjcQ6phY3ZZJbjErr9g==
+  dependencies:
+    tslib "^2.1.0"
+
 "@firebase/messaging-compat@0.2.12":
   version "0.2.12"
   resolved "https://registry.yarnpkg.com/@firebase/messaging-compat/-/messaging-compat-0.2.12.tgz#3acf08796d1a2cdb561a8ebc15a9ea2ef7586f60"
@@ -717,6 +748,13 @@
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/@firebase/util/-/util-1.10.0.tgz#9ec8ab54da82bfc31baff0c43cb281998cbeddab"
   integrity sha512-xKtx4A668icQqoANRxyDLBLz51TAbDP9KRfpbKGxiCAW346d0BeJe5vN6/hKxxmWwnZ0mautyv39JxviwwQMOQ==
+  dependencies:
+    tslib "^2.1.0"
+
+"@firebase/util@1.10.2":
+  version "1.10.2"
+  resolved "https://registry.yarnpkg.com/@firebase/util/-/util-1.10.2.tgz#4dbb565cfbdf51b4fb2081c5093dba3037d49a35"
+  integrity sha512-qnSHIoE9FK+HYnNhTI8q14evyqbc/vHRivfB4TgCIUOl4tosmKSQlp7ltymOlMP4xVIJTg5wrkfcZ60X4nUf7Q==
   dependencies:
     tslib "^2.1.0"
 
@@ -2633,11 +2671,6 @@ signal-exit@^4.0.1:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-4.1.0.tgz#952188c1cbd546070e2dd20d0f41c0ae0530cb04"
   integrity sha512-bzyZ1e88w9O1iNJbKnOlvYTrWPDl46O1bG0D3XInv+9tkPrxrN8jUUTiFlDkkmKWgn1M6CfIA13SuGqOa9Korw==
-
-sonner@^1.7.0:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/sonner/-/sonner-1.7.0.tgz#f59a2a70e049a179b6fbd1bb1bf2619d5ced07c0"
-  integrity sha512-W6dH7m5MujEPyug3lpI2l3TC3Pp1+LTgK0Efg+IHDrBbtEjyCmCHHo6yfNBOsf1tFZ6zf+jceWwB38baC8yO9g==
 
 source-map-js@^1.2.1:
   version "1.2.1"
