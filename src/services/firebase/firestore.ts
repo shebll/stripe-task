@@ -4,8 +4,11 @@ import {
   getDoc,
   updateDoc,
   serverTimestamp,
+  collection,
+  Timestamp,
 } from "firebase/firestore";
 import { db } from "../../config/firebase";
+import { Message } from "../../types";
 
 export interface UserProfile {
   uid: string;
@@ -52,3 +55,16 @@ export const updateUserProfile = async (
     updatedAt: serverTimestamp(),
   });
 };
+
+export async function saveChatToDatabase(userId: string, messages: Message[]) {
+  const chatRef = doc(collection(db, "ChatsCollection"));
+  await setDoc(chatRef, {
+    userId,
+    messages,
+    createdAt: Timestamp.now(),
+    shared: true,
+    upvotes: 0,
+    downvotes: 0,
+  });
+  return chatRef.id; // Return the chat ID
+}

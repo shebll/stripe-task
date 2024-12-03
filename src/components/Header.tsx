@@ -1,6 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Stethoscope, LogIn, UserPlus, Crown, LogOut } from "lucide-react";
+import {
+  Stethoscope,
+  LogIn,
+  UserPlus,
+  Crown,
+  LogOut,
+  Share,
+} from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 
 export const Header: React.FC = () => {
@@ -37,6 +44,14 @@ export const Header: React.FC = () => {
 
             {user ? (
               <div className="flex items-center space-x-3">
+                <Link
+                  to="/share-chats"
+                  className="flex items-center space-x-1 px-2 py-2 sm:py-2.5 "
+                >
+                  <Share className="w-4 h-4" />
+                  <span className="text-sm underline">Shared Chats</span>
+                </Link>
+
                 <Link
                   to="/pro"
                   className="flex items-center space-x-1.5 px-3 sm:px-4 py-2 sm:py-2.5 

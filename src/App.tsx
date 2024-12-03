@@ -11,6 +11,7 @@ import { DailyHealthTip } from "./components/DailyHealthTip";
 import { AuthProvider } from "./contexts/AuthContext";
 import { AuthGuard } from "./components/AuthGuard";
 import { ProGuard } from "./components/ProGuard";
+import { SharedChatsList } from "./pages/Share-chats";
 
 function App() {
   return (
@@ -36,6 +37,14 @@ function App() {
             element={
               <AuthGuard>
                 <PaymentSuccess />
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/share-chats"
+            element={
+              <AuthGuard>
+                <SharedChatsList />
               </AuthGuard>
             }
           />
