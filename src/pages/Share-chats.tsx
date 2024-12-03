@@ -3,13 +3,27 @@ import { db } from "../config/firebase";
 import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { Chat } from "../types";
-import { Loader, MessageSquare, User } from "lucide-react";
+import {
+  Loader,
+  MessageSquare,
+  PieChart,
+  ThumbsDown,
+  ThumbsUp,
+  TrendingUp,
+  User,
+} from "lucide-react";
 
 export function SharedChatsList() {
   const { user } = useAuth();
   const [chats, setChats] = useState<Chat[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [statistics, setStatistics] = useState({
+    totalChats: 0,
+    totalUpvotes: 0,
+    totalDownvotes: 0,
+    upvotePercentage: 0,
+  });
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -39,6 +53,30 @@ export function SharedChatsList() {
             downvotes: data.downvotes || 0,
           } as Chat;
         });
+        // Calculate statistics
+        const totalChats = sharedChats.length;
+        const totalUpvotes = sharedChats.reduce(
+          (sum, chat) => sum + (chat.upvotes || 0),
+          0
+        );
+        const totalDownvotes = sharedChats.reduce(
+          (sum, chat) => sum + (chat.downvotes || 0),
+          0
+        );
+        const upvotePercentage =
+          totalChats > 0
+            ? ((totalUpvotes / (totalUpvotes + totalDownvotes)) * 100).toFixed(
+                2
+              )
+            : 0;
+
+        setStatistics({
+          totalChats,
+          totalUpvotes,
+          totalDownvotes,
+          upvotePercentage: Number(upvotePercentage),
+        });
+
         setChats(sharedChats);
       } catch (err) {
         console.error("Error fetching chats:", err);
@@ -70,6 +108,42 @@ export function SharedChatsList() {
   return (
     <div className="max-w-6xl px-4 py-3 mx-auto sm:py-4">
       <h1 className="mb-4 text-2xl font-semibold text-center">Shared Chats</h1>
+      <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-3">
+        {/* Statistics Cards */}
+        <div className="p-6 transition-all transform bg-white border rounded-lg shadow-md ">
+          <div className="flex items-center justify-between mb-4">
+            <PieChart className="w-8 h-8 text-blue-500" />
+            <span className="text-xl font-bold text-gray-700">
+              {statistics.totalChats}
+            </span>
+          </div>
+          <h3 className="text-sm font-medium text-gray-500">
+            Total Shared Chats
+          </h3>
+        </div>
+
+        <div className="p-6 transition-all transform bg-white border rounded-lg shadow-md ">
+          <div className="flex items-center justify-between mb-4">
+            <ThumbsUp className="w-8 h-8 text-green-500" />
+            <span className="text-xl font-bold text-green-700">
+              {statistics.totalUpvotes}
+            </span>
+          </div>
+          <h3 className="text-sm font-medium text-gray-500">Total Upvotes</h3>
+        </div>
+
+        <div className="p-6 transition-all transform bg-white border rounded-lg shadow-md ">
+          <div className="flex items-center justify-between mb-4">
+            <TrendingUp className="w-8 h-8 text-purple-500" />
+            <span className="text-xl font-bold text-purple-700">
+              {statistics.upvotePercentage}%
+            </span>
+          </div>
+          <h3 className="text-sm font-medium text-gray-500">
+            Upvote Percentage
+          </h3>
+        </div>
+      </div>
       {chats.length > 0 ? (
         <ul className="space-y-4">
           {chats.map((chat) => (
@@ -88,8 +162,15 @@ export function SharedChatsList() {
                   <MessageSquare className="w-4 h-4" />
                   <span>{chat.messages.length} messages</span>
                 </div>
-                <div className="font-semibold text-green-500">
-                  {chat.upvotes} upvotes
+                <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 text-green-600">
+                    <ThumbsUp className="w-4 h-4" />
+                    <span>{chat.upvotes}</span>
+                  </div>
+                  <div className="flex items-center space-x-1 text-red-600">
+                    <ThumbsDown className="w-4 h-4" />
+                    <span>{chat.downvotes}</span>
+                  </div>
                 </div>
               </div>
               <a

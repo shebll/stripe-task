@@ -11,6 +11,7 @@ const SharedChat: React.FC = () => {
   const [messages, setMessages] = useState<Message[] | null>(null);
   const [upvotes, setUpvotes] = useState<number>(0);
   const [downvotes, setDownvotes] = useState<number>(0);
+  const [userVote, setUserVote] = useState<"upvote" | "downvote" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -31,6 +32,13 @@ const SharedChat: React.FC = () => {
           setMessages(chatData.messages);
           setUpvotes(chatData.upvotes || 0);
           setDownvotes(chatData.downvotes || 0);
+
+          // Check if user has already voted (you might want to implement this differently)
+          const votedKey = `voted_${shareId}`;
+          const storedVote = localStorage.getItem(votedKey);
+          if (storedVote) {
+            setUserVote(storedVote as "upvote" | "downvote");
+          }
         } else {
           setError("Chat not found");
         }
@@ -47,9 +55,37 @@ const SharedChat: React.FC = () => {
   const handleVote = async (type: "upvote" | "downvote") => {
     if (!shareId) return;
 
+    const votedKey = `voted_${shareId}`;
+
     try {
       const chatRef = doc(db, "ChatsCollection", shareId);
 
+      // If clicking the same vote, remove the vote
+      if (userVote === type) {
+        if (type === "upvote") {
+          setUpvotes((prev) => Math.max(0, prev - 1));
+          await updateDoc(chatRef, { upvotes: increment(-1) });
+        } else {
+          setDownvotes((prev) => Math.max(0, prev - 1));
+          await updateDoc(chatRef, { downvotes: increment(-1) });
+        }
+        setUserVote(null);
+        localStorage.removeItem(votedKey);
+        return;
+      }
+
+      // If switching votes
+      if (userVote) {
+        if (userVote === "upvote") {
+          setUpvotes((prev) => Math.max(0, prev - 1));
+          await updateDoc(chatRef, { upvotes: increment(-1) });
+        } else {
+          setDownvotes((prev) => Math.max(0, prev - 1));
+          await updateDoc(chatRef, { downvotes: increment(-1) });
+        }
+      }
+
+      // Add new vote
       if (type === "upvote") {
         setUpvotes((prev) => prev + 1);
         await updateDoc(chatRef, { upvotes: increment(1) });
@@ -57,6 +93,10 @@ const SharedChat: React.FC = () => {
         setDownvotes((prev) => prev + 1);
         await updateDoc(chatRef, { downvotes: increment(1) });
       }
+
+      // Store the vote in local storage
+      setUserVote(type);
+      localStorage.setItem(votedKey, type);
     } catch (error) {
       console.error("Error updating votes:", error);
     }
@@ -110,14 +150,24 @@ const SharedChat: React.FC = () => {
             <h1 className="text-lg font-semibold text-gray-800">Shared Chat</h1>
             <div className="flex items-center space-x-4">
               <button
-                className="flex items-center space-x-1 text-gray-600 hover:text-green-500"
+                className={`flex items-center space-x-1 
+                  ${
+                    userVote === "upvote"
+                      ? "text-green-600 bg-green-100 rounded-full p-1"
+                      : "text-gray-600 hover:text-green-500"
+                  }`}
                 onClick={() => handleVote("upvote")}
               >
                 <ThumbsUp className="w-5 h-5" />
                 <span>{upvotes}</span>
               </button>
               <button
-                className="flex items-center space-x-1 text-gray-600 hover:text-red-500"
+                className={`flex items-center space-x-1 
+                  ${
+                    userVote === "downvote"
+                      ? "text-red-600 bg-red-100 rounded-full p-1"
+                      : "text-gray-600 hover:text-red-500"
+                  }`}
                 onClick={() => handleVote("downvote")}
               >
                 <ThumbsDown className="w-5 h-5" />
