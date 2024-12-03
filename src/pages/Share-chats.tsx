@@ -107,7 +107,16 @@ export function SharedChatsList() {
 
   return (
     <div className="max-w-6xl px-4 py-3 mx-auto sm:py-4">
-      <h1 className="mb-4 text-2xl font-semibold text-center">Shared Chats</h1>
+      <h1
+        className={`mb-4 text-2xl font-semibold text-center ${
+          statistics.upvotePercentage >= 90 && "text-yellow-500"
+        }`}
+      >
+        Shared Chats
+      </h1>
+      <p className="mb-4 text-sm text-gray-500">
+        Click on a chat to see its messages and vote on them. and share it!
+      </p>
       <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-3">
         {/* Statistics Cards */}
         <div className="p-6 transition-all transform bg-white border rounded-lg shadow-md ">
