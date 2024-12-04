@@ -34,6 +34,13 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
           {
             userId: user.uid,
             email: user.email,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Origin: "https://curious-cranachan-ab9992.netlify.app",
+              Accept: "application/json",
+            },
           }
         );
         setClientSecret(response.data.clientSecret);
