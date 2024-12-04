@@ -30,7 +30,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
 
       try {
         const response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/api/create-checkout-intent`,
+          `${import.meta.env.VITE_API_URL}/create-checkout-intent`,
           {
             userId: user.uid,
             email: user.email,
