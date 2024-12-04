@@ -38,7 +38,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
           {
             headers: {
               "Content-Type": "application/json",
-              Origin: "https://curious-cranachan-ab9992.netlify.app",
               Accept: "application/json",
             },
           }
