@@ -1,6 +1,14 @@
 [build]
   command = "npm run build"
   publish = "dist"
+  functions = "netlify/functions"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "https://curious-cranachan-ab9992.netlify.app"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
 
 [[redirects]]
   from = "/shared/*"

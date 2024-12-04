@@ -1,98 +1,72 @@
-import { Handler } from '@netlify/functions';
-import Stripe from 'stripe';
+import { Handler } from "@netlify/functions";
+import Stripe from "stripe";
 
 if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY must be defined');
+  throw new Error("STRIPE_SECRET_KEY must be defined");
 }
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2024-11-20',
+  apiVersion: "2024-11-20.acacia",
   typescript: true,
 });
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
-
 export const handler: Handler = async (event) => {
-  if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 200,
-      headers: corsHeaders,
-      body: '',
-    };
-  }
-
-  if (event.httpMethod !== 'POST') {
+  if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: 'Method not allowed' }),
+      body: JSON.stringify({ error: "Method Not Allowed" }),
     };
   }
 
   try {
-    const { userId } = JSON.parse(event.body || '{}');
-    
-    if (!userId) {
+    const { userId, email } = JSON.parse(event.body || "");
+
+    if (!userId || !email) {
       return {
         statusCode: 400,
-        headers: corsHeaders,
-        body: JSON.stringify({ error: 'userId is required' }),
+        body: JSON.stringify({ error: "User ID and email are required" }),
       };
     }
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
+      payment_method_types: ["card"],
       line_items: [
         {
           price_data: {
-            currency: 'usd',
+            currency: "usd",
             product_data: {
-              name: 'HealthChat Pro Subscription',
-              description: 'Monthly subscription to HealthChat Pro',
+              name: "HealthChat Pro Subscription",
+              description: "Monthly subscription to HealthChat Pro",
             },
-            unit_amount: 3000,
+            unit_amount: 3000, // Amount in cents ($30)
             recurring: {
-              interval: 'month',
+              interval: "month",
             },
           },
           quantity: 1,
         },
       ],
-      mode: 'subscription',
-      success_url: `${process.env.URL || 'http://localhost:8888'}/payment-success`,
-      cancel_url: `${process.env.URL || 'http://localhost:8888'}/pro`,
+      mode: "subscription",
+      customer_email: email,
       client_reference_id: userId,
+      success_url: `${process.env.CLIENT_URL}/payment-success`,
+      cancel_url: `${process.env.CLIENT_URL}/pro`,
       metadata: {
-        userId: userId,
+        userId,
       },
     });
 
     return {
       statusCode: 200,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        sessionId: session.id,
-        url: session.url,
-      }),
+      body: JSON.stringify({ url: session.url }),
     };
   } catch (error: any) {
-    console.error('Stripe error:', error);
-    
+    console.error("Error creating checkout session:", error);
     return {
       statusCode: 500,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify({
-        error: error.message || 'Internal server error',
+        error: "Internal Server Error",
+        details: error.message,
       }),
     };
   }

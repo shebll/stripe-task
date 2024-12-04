@@ -1,67 +1,86 @@
-import { Handler } from '@netlify/functions';
-import Stripe from 'stripe';
-import { getFirestore, doc, updateDoc } from 'firebase/firestore';
-import { initializeApp } from 'firebase/app';
+import { Handler } from "@netlify/functions";
+import stripe from "stripe";
+import * as admin from "firebase-admin";
+import dotenv from "dotenv";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-11-20',
+dotenv.config();
+
+const stripeClient = new stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2024-11-20.acacia",
 });
 
-const firebaseConfig = {
-  apiKey: "AIzaSyABPX0xWonNWN4wUkkzpAtrhJHhBI3B1s8",
-  authDomain: "patient-chat-814e6.firebaseapp.com",
-  projectId: "patient-chat-814e6",
-  storageBucket: "patient-chat-814e6.firebasestorage.app",
-  messagingSenderId: "974352497199",
-  appId: "1:974352497199:web:c32834deed4d80a63724da",
-  measurementId: "G-0R5KYR6NEL"
+// Initialize Firebase Admin
+const serviceAccount = {
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  privateKey: process.env.FIREBASE_PRIVATE_KEY!.replace(/\\n/g, "\n"),
+  clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 
+const db = admin.firestore();
+
+// Create Stripe webhook handler
 export const handler: Handler = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method not allowed' };
-  }
-
-  const sig = event.headers['stripe-signature'];
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-  if (!sig || !webhookSecret) {
-    return { statusCode: 400, body: 'Missing signature or webhook secret' };
-  }
+  const sig = event.headers["stripe-signature"] as string;
+  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+  const rawBody = event.body;
 
   try {
-    const stripeEvent = stripe.webhooks.constructEvent(
-      event.body || '',
+    const eventReceived = stripeClient.webhooks.constructEvent(
+      rawBody!,
       sig,
-      webhookSecret
+      endpointSecret
     );
 
-    if (stripeEvent.type === 'checkout.session.completed') {
-      const session = stripeEvent.data.object as Stripe.Checkout.Session;
-      const userId = session.client_reference_id;
-
-      if (userId) {
-        const userRef = doc(db, 'users', userId);
-        await updateDoc(userRef, {
-          isPro: true,
-          stripeCustomerId: session.customer,
-          subscriptionId: session.subscription,
-        });
+    switch (eventReceived.type) {
+      case "payment_intent.created": {
+        const paymentIntent = eventReceived.data.object;
+        console.log("Payment Intent created:", paymentIntent.id);
+        break;
       }
+
+      case "charge.succeeded": {
+        const session = eventReceived.data.object;
+        const userId = session.metadata.userId;
+        if (!userId) break;
+
+        const userRef = db.collection("users").doc(userId);
+        const userDoc = await userRef.get();
+        if (userDoc.exists) {
+          await userRef.update({
+            isPro: true,
+            stripeCustomerId: session.customer || null,
+            paymentIntentId: session.payment_intent,
+          });
+          console.log("User profile updated to Pro");
+        } else {
+          console.log("User not found in database");
+        }
+        break;
+      }
+
+      case "charge.updated": {
+        const session = eventReceived.data.object;
+        console.log("Checkout session completed:", session);
+        break;
+      }
+
+      default:
+        console.log(`Unhandled event type ${eventReceived.type}`);
     }
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ received: true }),
+      body: "Webhook handled successfully",
     };
-  } catch (error) {
-    console.error('Webhook error:', error);
+  } catch (err) {
+    console.error("Webhook Error:", err);
     return {
       statusCode: 400,
-      body: JSON.stringify({ error: 'Webhook error' }),
+      body: `Webhook Error: ${err}`,
     };
   }
 };
