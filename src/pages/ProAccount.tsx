@@ -16,7 +16,7 @@ const ProAccount: React.FC = () => {
   //   try {
   //     // Call the Netlify function
   //     const response = await axios.post(
-  //       `${import.meta.env.VITE_API_URL}/create-checkout`,
+  //       `${import.meta.env.VITE_API_URL}/api/create-checkout`,
   //       {
   //         userId: user?.id,
   //         email: user?.email,

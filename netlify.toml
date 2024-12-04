@@ -8,6 +8,7 @@
   status = 200
 
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from = "/api/*"
+  to = "https://stripe-task-server-eta.vercel.app/:splat"
   status = 200
+  force = true
