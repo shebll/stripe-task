@@ -29,20 +29,32 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
       if (!user) return;
 
       try {
-        const response = await axios.post(
-          `/.netlify/functions/create-checkout-intent`,
+        const response = await fetch(
+          "/.netlify/functions/create-checkout-intent",
           {
-            userId: user.uid,
-            email: user.email,
-          },
-          {
+            method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Accept: "application/json",
             },
+            body: JSON.stringify({ userId: user.uid, email: user.email }),
           }
         );
-        setClientSecret(response.data.clientSecret);
+
+        const data = await response.json();
+        // const response = await axios.post(
+        //   `/.netlify/functions/create-checkout-intent`,
+        //   {
+        //     userId: user.uid,
+        //     email: user.email,
+        //   },
+        //   {
+        //     headers: {
+        //       "Content-Type": "application/json",
+        //       Accept: "application/json",
+        //     },
+        //   }
+        // );
+        setClientSecret(data.clientSecret);
       } catch (err) {
         setError(err.message || "Failed to create payment intent");
         console.error("Error creating payment intent:", err);
