@@ -60,6 +60,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
         ); */
         setClientSecret(response.data.clientSecret);
       } catch (err) {
+        setError(err.message || "Failed to create payment intent");
         console.error("Error creating payment intent:", err);
       }
     };
