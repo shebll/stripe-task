@@ -31,6 +31,7 @@ const db = admin.firestore();
 // Create Stripe webhook handler
 export const handler: Handler = async (event) => {
   const sig = event.headers["stripe-signature"] as string;
+  console.log("Headers:", event.headers);
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
   const rawBody = event.body;
 
