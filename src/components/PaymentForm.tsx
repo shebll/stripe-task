@@ -29,6 +29,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
       if (!user) return;
 
       try {
+        // const response = await fetch("/.netlify/functions/hello");
         const response = await fetch(
           "/.netlify/functions/create-checkout-intent",
           {
@@ -39,8 +40,14 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
             body: JSON.stringify({ userId: user.uid, email: user.email }),
           }
         );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
+        // console.log(response);
         const data = await response.json();
+        // console.log(data);
+        setClientSecret(data.clientSecret);
         // const response = await axios.post(
         //   `/.netlify/functions/create-checkout-intent`,
         //   {
@@ -54,7 +61,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
         //     },
         //   }
         // );
-        setClientSecret(data.clientSecret);
+        // setClientSecret(data.clientSecret);
       } catch (err) {
         setError(err.message || "Failed to create payment intent");
         console.error("Error creating payment intent:", err);

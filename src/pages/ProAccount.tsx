@@ -5,6 +5,7 @@ import StripeCheckoutForm from "../components/stripe-checkout-form";
 
 const ProAccount: React.FC = () => {
   const { user } = useAuth();
+  console.log(user);
 
   // const [loading, setLoading] = useState(false);
   // const [error, setError] = useState<string | null>(null);

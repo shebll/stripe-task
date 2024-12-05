@@ -8,6 +8,7 @@ dotenv.config();
 const stripeClient = new stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-11-20.acacia",
 });
+console.log("web hook", process.env.STRIPE_SECRET_KEY!);
 
 // Initialize Firebase Admin
 const serviceAccount = {
@@ -20,6 +21,11 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
+console.log("web hook serviceAccount", serviceAccount);
+console.log(
+  "web hook STRIPE_WEBHOOK_SECRET",
+  process.env.STRIPE_WEBHOOK_SECRET!
+);
 const db = admin.firestore();
 
 // Create Stripe webhook handler
@@ -27,6 +33,8 @@ export const handler: Handler = async (event) => {
   const sig = event.headers["stripe-signature"] as string;
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
   const rawBody = event.body;
+
+  console.log("stripe webhook secret", endpointSecret);
 
   try {
     const eventReceived = stripeClient.webhooks.constructEvent(
