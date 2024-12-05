@@ -13,7 +13,7 @@ console.log("web hook", process.env.STRIPE_SECRET_KEY!);
 // Initialize Firebase Admin
 const serviceAccount = {
   projectId: process.env.FIREBASE_PROJECT_ID,
-  privateKey: process.env.FIREBASE_PRIVATE_KEY!.replace(/\\n/g, "\n"),
+  privateKey: process.env.FIREBASE_PRIVATE_KEY,
   clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
 };
 
@@ -42,6 +42,8 @@ export const handler: Handler = async (event) => {
       sig,
       endpointSecret
     );
+
+    console.log(eventReceived);
 
     switch (eventReceived.type) {
       case "payment_intent.created": {
