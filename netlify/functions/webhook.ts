@@ -248,30 +248,30 @@ export const handler: Handler = async (event) => {
       //   break;
       // }
 
-      // case "customer.subscription.updated": {
-      //   const subscription = eventReceived.data.object;
-      //   const stripeCustomerId = subscription.customer;
+      case "customer.subscription.updated": {
+        const subscription = eventReceived.data.object;
+        const stripeCustomerId = subscription.customer;
 
-      //   const usersRef = db.collection("users");
-      //   const userQuery = await usersRef
-      //     .where("stripeCustomerId", "==", stripeCustomerId)
-      //     .get();
+        const usersRef = db.collection("users");
+        const userQuery = await usersRef
+          .where("stripeCustomerId", "==", stripeCustomerId)
+          .get();
 
-      //   if (!userQuery.empty) {
-      //     const userDoc = userQuery.docs[0];
-      //     const plan =
-      //       subscription.items.data[0].price.id === Plans.Pro.priceId
-      //         ? "Pro"
-      //         : "Deluxe";
+        if (!userQuery.empty) {
+          const userDoc = userQuery.docs[0];
+          const plan =
+            subscription.items.data[0].price.id === Plans.Pro.priceId
+              ? "Pro"
+              : "Deluxe";
 
-      //     await userDoc.ref.update({
-      //       subscriptionPlan: plan,
-      //       isPro: plan === "Pro",
-      //       isDeluxe: plan === "Deluxe",
-      //     });
-      //   }
-      //   break;
-      // }
+          await userDoc.ref.update({
+            subscriptionPlan: plan,
+            isPro: plan === "Pro",
+            isDeluxe: plan === "Deluxe",
+          });
+        }
+        break;
+      }
 
       case "customer.subscription.deleted": {
         const subscription = eventReceived.data.object;
