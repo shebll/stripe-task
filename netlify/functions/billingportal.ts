@@ -11,7 +11,7 @@ export const handler: Handler = async (event) => {
   try {
     const session = await stripeClient.billingPortal.sessions.create({
       customer: customerId,
-      return_url: process.env.VITE_API_URL,
+      return_url: process.env.VITE_APP_URL,
     });
 
     return { statusCode: 200, body: JSON.stringify({ url: session.url }) };

@@ -7,6 +7,7 @@ import {
   Crown,
   LogOut,
   Share,
+  WorkflowIcon,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -73,6 +74,15 @@ export const Header: React.FC = () => {
                   <Share className="w-4 h-4" />
                   <span className="text-sm underline">Shared Chats</span>
                 </Link>
+                {user.isDeluxe && (
+                  <Link
+                    to="/plan"
+                    className="flex items-center space-x-1 px-2 py-2 sm:py-2.5 "
+                  >
+                    <WorkflowIcon className="w-4 h-4" />
+                    <span className="text-sm underline">Plan</span>
+                  </Link>
+                )}
 
                 {user.isPro || user.isDeluxe ? (
                   <button

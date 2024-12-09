@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { User } from 'firebase/auth';
-import { doc, onSnapshot } from 'firebase/firestore';
-import { db } from '../config/firebase';
-import { getFirebaseErrorMessage } from '../utils/firebase-errors';
+import { useState, useEffect } from "react";
+import { User } from "firebase/auth";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "../config/firebase";
+import { getFirebaseErrorMessage } from "../utils/firebase-errors";
 
 export function useProStatus(user: User | null) {
   const [isPro, setIsPro] = useState(false);
@@ -17,13 +17,13 @@ export function useProStatus(user: User | null) {
     }
 
     const unsubscribe = onSnapshot(
-      doc(db, 'users', user.uid),
+      doc(db, "users", user.uid),
       (doc) => {
         setIsPro(doc.data()?.isPro || false);
         setIsLoading(false);
       },
       (error) => {
-        console.error('Error fetching pro status:', error);
+        console.error("Error fetching pro status:", error);
         setError(getFirebaseErrorMessage(error.code));
         setIsLoading(false);
       }
