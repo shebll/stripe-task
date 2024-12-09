@@ -7,6 +7,29 @@ const ProAccount: React.FC = () => {
   const { user } = useAuth();
   const [selectedPlan, setSelectedPlan] = useState<"Pro" | "Deluxe">("Pro");
 
+  const handleManageBilling = async () => {
+    try {
+      const response = await fetch("/.netlify/functions/billingportal", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          customerId: user?.stripeCustomerId,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log(data);
+      window.location.href = data.url;
+    } catch (error) {
+      console.error("There was an error!", error);
+      alert("Failed to redirect to the billing portal.");
+    }
+  };
+
   const currentPlan = Plans[selectedPlan];
 
   if (user?.isPro || user?.isDeluxe) {
@@ -36,7 +59,7 @@ const ProAccount: React.FC = () => {
               </div>
             </div>
             <button
-              // onClick={handleManageBilling}
+              onClick={handleManageBilling}
               className="flex items-center justify-center w-full px-4 py-2 mt-6 text-white transition duration-300 bg-blue-600 rounded-md hover:bg-blue-700"
             >
               <span className="font-medium">Go to Dashboard</span>
