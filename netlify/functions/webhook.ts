@@ -53,7 +53,7 @@ export const handler: Handler = async (event) => {
           const session = await stripeClient.checkout.sessions.retrieve(
             eventReceived.data.object.id,
             {
-              expand: ["customer", "line_items"],
+              expand: ["line_items"],
             }
           );
 
