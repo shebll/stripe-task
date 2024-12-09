@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Crown, Check, Settings, ArrowRight } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
-import StripeCheckoutForm from "../components/stripe-checkout-form";
 import { Plans } from "../utils/Plans";
 
 const ProAccount: React.FC = () => {
@@ -98,7 +97,7 @@ const ProAccount: React.FC = () => {
               </p>
             </div>
           </div>
-          <div className="flex flex-col justify-between gap-6 lg:flex-row">
+          <div className="flex flex-col justify-between gap-6 ">
             <div className="mb-8 space-y-4">
               {currentPlan.features.map((feature, index) => (
                 <div key={index} className="flex items-center space-x-3">
@@ -110,12 +109,14 @@ const ProAccount: React.FC = () => {
               ))}
             </div>
             {user ? (
-              <StripeCheckoutForm
-                plan={currentPlan.name}
-                price={currentPlan.price}
-                priceId={currentPlan.priceId}
-              />
+              <a
+                href={`${currentPlan.link}?prefilled_email=${user.email}`}
+                className="px-4 py-2 font-bold text-center text-white bg-blue-600 rounded-md"
+              >
+                Subscribe
+              </a>
             ) : (
+              // <StripeCheckoutForm plan={currentPlan} />
               <div className="p-4 text-center bg-gray-50 rounded-xl">
                 <p className="text-gray-600">
                   Please log in to upgrade your plan
