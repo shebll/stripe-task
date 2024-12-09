@@ -4,18 +4,19 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
-import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
 import { Loader } from "lucide-react";
 
 interface PaymentFormProps {
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
+  planId: string;
 }
 
 const PaymentForm: React.FC<PaymentFormProps> = ({
   isLoading,
   setIsLoading,
+  planId,
 }) => {
   const { user } = useAuth();
   const stripe = useStripe();
@@ -29,7 +30,6 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
       if (!user) return;
 
       try {
-        // const response = await fetch("/.netlify/functions/hello");
         const response = await fetch(
           "/.netlify/functions/create-checkout-intent",
           {
@@ -37,31 +37,19 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ userId: user.uid, email: user.email }),
+            body: JSON.stringify({
+              userId: user.uid,
+              email: user.email,
+              planId,
+            }),
           }
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        // console.log(response);
         const data = await response.json();
-        // console.log(data);
         setClientSecret(data.clientSecret);
-        // const response = await axios.post(
-        //   `/.netlify/functions/create-checkout-intent`,
-        //   {
-        //     userId: user.uid,
-        //     email: user.email,
-        //   },
-        //   {
-        //     headers: {
-        //       "Content-Type": "application/json",
-        //       Accept: "application/json",
-        //     },
-        //   }
-        // );
-        // setClientSecret(data.clientSecret);
       } catch (err) {
         setError(err.message || "Failed to create payment intent");
         console.error("Error creating payment intent:", err);
@@ -69,7 +57,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
     };
 
     createPaymentIntent();
-  }, [user]);
+  }, [user, planId]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

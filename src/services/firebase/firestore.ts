@@ -14,6 +14,7 @@ export interface UserProfile {
   uid: string;
   email: string;
   isPro: boolean;
+  isDeluxe: boolean;
   createdAt: Date;
   stripeCustomerId?: string;
   subscriptionId?: string;
@@ -25,6 +26,7 @@ export const createUserProfile = async (uid: string, email: string) => {
     uid,
     email,
     isPro: false,
+    isDeluxe: false,
     createdAt: serverTimestamp(),
   });
 };

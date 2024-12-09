@@ -139,6 +139,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           setUser({
             email: firebaseUser.email!,
             isPro: false,
+            isDeluxe: false,
             createdAt: new Date(),
             uid: firebaseUser.uid,
           });
@@ -165,6 +166,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setUser({
       email,
       isPro: false,
+      isDeluxe: false,
       createdAt: new Date(),
       uid: firebaseUser.uid,
     });

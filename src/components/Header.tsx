@@ -12,7 +12,30 @@ import { useAuth } from "../contexts/AuthContext";
 
 export const Header: React.FC = () => {
   const { user, logout } = useAuth();
-  // console.log(user);
+  console.log(user);
+
+  const handleManageBilling = async () => {
+    try {
+      const response = await fetch("/.netlify/functions/billingportal", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          customerId: user?.stripeCustomerId,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log(data);
+      window.location.href = data.url;
+    } catch (error) {
+      console.error("There was an error!", error);
+      alert("Failed to redirect to the billing portal.");
+    }
+  };
 
   const handleLogout = () => {
     logout();
@@ -34,14 +57,13 @@ export const Header: React.FC = () => {
                 Your AI Health Assistant
               </p>
             </div>
-          </Link>
-          <div className="flex items-center space-x-3 sm:space-x-4">
             <div className="hidden sm:block">
               <span className="px-3 py-1 text-xs font-medium text-blue-900 bg-blue-100 rounded-full">
                 Powered by AI
               </span>
             </div>
-
+          </Link>
+          <div className="flex items-center space-x-3 sm:space-x-4">
             {user ? (
               <div className="flex items-center space-x-3">
                 <Link
@@ -52,17 +74,31 @@ export const Header: React.FC = () => {
                   <span className="text-sm underline">Shared Chats</span>
                 </Link>
 
-                <Link
-                  to="/pro"
-                  className="flex items-center space-x-1.5 px-3 sm:px-4 py-2 sm:py-2.5 
+                {user.isPro || user.isDeluxe ? (
+                  <button
+                    onClick={handleManageBilling}
+                    className="flex items-center space-x-1.5 px-3 sm:px-4 py-2 sm:py-2.5 
                            bg-gradient-to-r from-blue-900 to-blue-800 text-white rounded-xl
                            hover:from-blue-800 hover:to-blue-700 transition-colors duration-200 shadow-sm"
-                >
-                  <Crown className="w-4 h-4 sm:w-5 sm:h-5" />
-                  <span className="text-sm font-medium sm:text-base">
-                    Upgrade to Pro
-                  </span>
-                </Link>
+                  >
+                    <Crown className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span className="text-sm font-medium sm:text-base">
+                      Mange Plan
+                    </span>
+                  </button>
+                ) : (
+                  <Link
+                    to="/pro"
+                    className="flex items-center space-x-1.5 px-3 sm:px-4 py-2 sm:py-2.5 
+                           bg-gradient-to-r from-blue-900 to-blue-800 text-white rounded-xl
+                           hover:from-blue-800 hover:to-blue-700 transition-colors duration-200 shadow-sm"
+                  >
+                    <Crown className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span className="text-sm font-medium sm:text-base">
+                      Upgrade to Pro
+                    </span>
+                  </Link>
+                )}
                 <button
                   onClick={handleLogout}
                   className="flex items-center space-x-1.5 px-3 sm:px-4 py-2 sm:py-2.5 
