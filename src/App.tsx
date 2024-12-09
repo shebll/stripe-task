@@ -12,7 +12,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { AuthGuard } from "./components/AuthGuard";
 // import { ProGuard } from "./components/ProGuard";
 import { SharedChatsList } from "./pages/Share-chats";
-import { DeluxeGuard } from "./pages/DeluxeGuard";
+import { DeluxeGuard } from "./components/DeluxeGuard";
 import CarePlan from "./pages/generatorpage";
 // import ManageBilling from "./pages/payment-dashboard";
 
