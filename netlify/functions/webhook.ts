@@ -103,6 +103,7 @@ export const handler: Handler = async (event) => {
                 subscriptionPlan: planId,
                 isPro: plan === "Pro",
                 isDeluxe: plan === "Deluxe",
+                stripeCustomerId: existingStripeCustomerId,
               });
             } else {
               console.log(
@@ -125,6 +126,48 @@ export const handler: Handler = async (event) => {
         } catch (error) {
           console.error("Error handling checkout.session.completed:", error);
         }
+        break;
+      }
+
+      case "customer.subscription.updated": {
+        const subscription = eventReceived.data.object;
+        const stripeCustomerId = subscription.customer;
+
+        const usersRef = db.collection("users");
+        const userQuery = await usersRef
+          .where("stripeCustomerId", "==", stripeCustomerId)
+          .get();
+
+        if (!userQuery.empty) {
+          const userDoc = userQuery.docs[0];
+          const plan =
+            subscription.items.data[0].price.id === Plans.Pro.priceId
+              ? "Pro"
+              : "Deluxe";
+
+          await userDoc.ref.update({
+            subscriptionPlan: subscription.items.data[0].price.id,
+            isPro: plan === "Pro",
+            isDeluxe: plan === "Deluxe",
+          });
+        }
+        break;
+      }
+
+      case "customer.subscription.deleted": {
+        const subscription = eventReceived.data.object;
+        const userId = subscription.metadata.userId;
+
+        if (!userId) break;
+
+        const userRef = db.collection("users").doc(userId);
+        await userRef.update({
+          isPro: false,
+          isDeluxe: false,
+          subscriptionId: null,
+        });
+
+        console.log("Subscription canceled; user downgraded to free");
         break;
       }
 
@@ -247,48 +290,6 @@ export const handler: Handler = async (event) => {
       //   }
       //   break;
       // }
-
-      case "customer.subscription.updated": {
-        const subscription = eventReceived.data.object;
-        const stripeCustomerId = subscription.customer;
-
-        const usersRef = db.collection("users");
-        const userQuery = await usersRef
-          .where("stripeCustomerId", "==", stripeCustomerId)
-          .get();
-
-        if (!userQuery.empty) {
-          const userDoc = userQuery.docs[0];
-          const plan =
-            subscription.items.data[0].price.id === Plans.Pro.priceId
-              ? "Pro"
-              : "Deluxe";
-
-          await userDoc.ref.update({
-            subscriptionPlan: plan,
-            isPro: plan === "Pro",
-            isDeluxe: plan === "Deluxe",
-          });
-        }
-        break;
-      }
-
-      case "customer.subscription.deleted": {
-        const subscription = eventReceived.data.object;
-        const userId = subscription.metadata.userId;
-
-        if (!userId) break;
-
-        const userRef = db.collection("users").doc(userId);
-        await userRef.update({
-          isPro: false,
-          isDeluxe: false,
-          subscriptionId: null,
-        });
-
-        console.log("Subscription canceled; user downgraded to free");
-        break;
-      }
 
       default:
         console.log(`Unhandled event type ${eventReceived.type}`);
