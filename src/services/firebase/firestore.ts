@@ -42,9 +42,17 @@ export const getUserProfile = async (
   }
 
   return {
-    uid,
-    ...userSnap.data(),
-  } as UserProfile;
+    email: userSnap.data().email!,
+    uid: uid,
+    isPro: userSnap.data().isPro,
+    isDeluxe: userSnap.data().isDeluxe,
+    createdAt: userSnap.data().createdAt,
+    subscriptionId: userSnap.data().subscriptionPlan || null,
+    stripeCustomerId:
+      typeof userSnap.data().stripeCustomerId === "object"
+        ? userSnap.data().stripeCustomerId.id
+        : userSnap.data().stripeCustomerId,
+  };
 };
 
 export const updateUserProfile = async (
